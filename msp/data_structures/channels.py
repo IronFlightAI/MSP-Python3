@@ -17,9 +17,10 @@ class Channel(DataStructure):
         self.pitch = MID_VALUE
         self.yaw = MID_VALUE
         self.throttle = MID_VALUE
-        self.arm = MIN_VALUE
-        self.angle = MIN_VALUE
-        self.failsafe = MIN_VALUE
+        self.aux1 = MIN_VALUE
+        self.aux2 = MIN_VALUE
+        self.aux3 = MIN_VALUE
+        self.aux4 = MIN_VALUE
 
     @staticmethod
     def parse(data):
@@ -29,10 +30,11 @@ class Channel(DataStructure):
             channel.pitch = unpack('<H', bytes(data[2:4]))[0]
             channel.yaw = unpack('<H', bytes(data[4:6]))[0]
             channel.throttle = unpack('<H', bytes(data[6:8]))[0]
-            channel.arm = unpack('<H', bytes(data[8:10]))[0]
-            channel.angle = unpack('<H', bytes(data[10:12]))[0]
-            # Channel 7 not used
-            # Channel 8 not used
+            channel.aux1 = unpack('<H', bytes(data[8:10]))[0]
+            channel.aux2 = unpack('<H', bytes(data[10:12]))[0]
+            channel.aux3 = unpack('<H', bytes(data[12:14]))[0]
+            channel.aux4 = unpack('<H', bytes(data[14:16]))[0]
+            # Channel 9 not used
 
         return channel
 
