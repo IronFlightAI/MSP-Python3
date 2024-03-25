@@ -260,7 +260,6 @@ class MultiWii:
         # Clear input buffer
         self.ser.reset_input_buffer()
 
-
         # TODO Add logging
 
         if is_error:
@@ -271,6 +270,11 @@ class MultiWii:
         return self.__rx_action_map[code](data)
 
     # Public Methods
+    def get_rx_action(self, code):
+        return self.__rx_action_map[code]
+
+    def get_tx_action(self, code):
+        return self.__tx_action_map[code]
 
     def close(self):
         self.ser.close()
