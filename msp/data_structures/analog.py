@@ -12,14 +12,14 @@ class Analog(DataStructure):
         self.intPowerMeterSum = 0
         self.rssi = 0
         self.amperage = 0
+        self.voltage = 0
 
     @staticmethod
     def parse(data: List[int]) -> DataStructure:
         analog = Analog()
-
-        analog.vbat = unpack('<b', bytes([data[0]]))[0]
-        analog.intPowerMeterSum = unpack('<h', bytes(data[1:3]))[0]
-        analog.rssi = unpack('<h', bytes(data[3:5]))[0]
-        analog.amperage = unpack('<h'< bytes(data[5:7]))[0]
-
+        (analog.vbat,
+         analog.intPowerMeterSum,
+         analog.rssi,
+         analog.amperage,
+         analog.voltage) = unpack('<bhhhh', bytes(data[:9]))
         return analog
