@@ -1,3 +1,5 @@
+import sys
+
 from serial.threaded import Packetizer, Protocol
 
 PAYLOAD_START_INDEX = 5
@@ -31,9 +33,11 @@ class MspPacket:
 
 
 class MspAsyncProtocol(Protocol):
-    def __init__(self):
+    def __init__(self, default_packet_handler=lambda packet: print(packet)):
         self.buffer = bytearray()
         self.transport = None
+        self.default_packet_handler = default_packet_handler
+        self._packet_handlers = dict()
 
     def connection_made(self, transport):
         """Store transport"""
@@ -65,8 +69,18 @@ class MspAsyncProtocol(Protocol):
                 break
 
     def handle_packet(self, packet: MspPacket):
-        print(packet)
-        print()
+        handler = self._packet_handlers.get(packet.code, self._default_packet_habdler)
+        if handler:
+            try:
+                handler(packet)
+            except:
+                print("Unexpected packet handler error:", sys.exc_info()[0])
 
     def send(self, data):
         self.transport.write(data)
+
+    def set_handler(self, code: int, handler):
+        self._packet_handlers[code] = handler
+
+    def remove_handler(self, code):
+        del self._packet_handlers[code]
