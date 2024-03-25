@@ -32,8 +32,8 @@ class DataStructure(ABC):
     @staticmethod
     def perform_checksum(data: bytes) -> bytes:
         checksum = 0
-        for i in data:
-            checksum = checksum ^ i
+        for byte in data:
+            checksum ^= byte
         return checksum.to_bytes(1, 'little')
 
     def serialize(self, data=None) -> bytes:

@@ -2,16 +2,18 @@ import sys
 
 from serial.threaded import Packetizer, Protocol
 
-PAYLOAD_START_INDEX = 5
+from msp.data_structures.data_structure import DataStructure
 
-CODE_INDEX = 4
+# Error codes
+CHECKSUM_MISSMATCH = 0
 
 SIZE_INDEX = 3
+CODE_INDEX = 4
+PAYLOAD_START_INDEX = 5
 
-CHECKSUM_LEN = 1
-
-CODE_LEN = 1
 HEADER_LEN = 4
+CHECKSUM_LEN = 1
+CODE_LEN = 1
 
 
 class MspPacket:
@@ -33,10 +35,13 @@ class MspPacket:
 
 
 class MspAsyncProtocol(Protocol):
-    def __init__(self, default_packet_handler=lambda packet: print(packet)):
-        self.buffer = bytearray()
+    def __init__(self,
+                 default_packet_handler=lambda packet: print(packet),
+                 error_handler=lambda error_code, packet: print("ERROR:", error_code, packet)):
         self.transport = None
+        self._buffer = bytearray()
         self.default_packet_handler = default_packet_handler
+        self.error_handler = error_handler
         self._packet_handlers = dict()
 
     def connection_made(self, transport):
@@ -49,27 +54,30 @@ class MspAsyncProtocol(Protocol):
         super(Packetizer, self).connection_lost(exc)
 
     def data_received(self, data):
-        print(data)
-        """Buffer received data, find TERMINATOR, call handle_packet"""
-        self.buffer.extend(data)
+        self._buffer.extend(data)
         while True:
-            if len(self.buffer) > HEADER_LEN:
-                payload_size = self.buffer[SIZE_INDEX]
+            if len(self._buffer) > HEADER_LEN:
+                payload_size = self._buffer[SIZE_INDEX]
                 packet_len = HEADER_LEN + CODE_LEN + payload_size + CHECKSUM_LEN
-                if len(self.buffer) >= packet_len:
-                    payload = self.buffer[PAYLOAD_START_INDEX:PAYLOAD_START_INDEX + payload_size]
-                    code = self.buffer[CODE_INDEX]
-                    checksum = self.buffer[packet_len - 1]
-                    packet = MspPacket(code, payload, checksum)
-                    self.buffer = self.buffer[packet_len:]
-                    self.handle_packet(packet)
+                if len(self._buffer) >= packet_len:
+                    actual_checksum = DataStructure.perform_checksum(
+                        self._buffer[SIZE_INDEX:PAYLOAD_START_INDEX + payload_size])
+                    payload = self._buffer[PAYLOAD_START_INDEX:PAYLOAD_START_INDEX + payload_size]
+                    code = self._buffer[CODE_INDEX]
+                    checksum = self._buffer[packet_len - 1:packet_len]
+                    packet = MspPacket(code, payload, checksum[0])
+                    self._buffer = self._buffer[packet_len:]
+                    if checksum == actual_checksum:
+                        self.handle_packet(packet)
+                    else:
+                        self._handle_error(CHECKSUM_MISSMATCH, packet)
                 else:
                     break
             else:
                 break
 
     def handle_packet(self, packet: MspPacket):
-        handler = self._packet_handlers.get(packet.code, self._default_packet_habdler)
+        handler = self._packet_handlers.get(packet.code, self.default_packet_handler)
         if handler:
             try:
                 handler(packet)
@@ -84,3 +92,7 @@ class MspAsyncProtocol(Protocol):
 
     def remove_handler(self, code):
         del self._packet_handlers[code]
+
+    def _handle_error(self, error_code, packet):
+        if self.error_handler:
+            self.error_handler(error_code, packet)

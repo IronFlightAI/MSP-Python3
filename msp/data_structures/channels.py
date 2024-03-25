@@ -45,7 +45,7 @@ class Channel(DataStructure):
             return super().serialize()
 
         # Serialize Data
-        result = int(16).to_bytes(1, 'little')
+        result = int(len(data) * 2).to_bytes(1, 'little')
         result += int(MessageIDs.SET_RAW_RC).to_bytes(1, 'little')
         for i in data:
             result += int(i).to_bytes(2, 'little')
