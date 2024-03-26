@@ -1,8 +1,10 @@
 import sys
+from typing import Any
 
 from serial.threaded import Packetizer, Protocol
 
 from msp.data_structures.data_structure import DataStructure
+from msp.message_ids import MessageIDs
 
 # Error codes
 CHECKSUM_MISSMATCH = 0
@@ -18,18 +20,18 @@ CODE_LEN = 1
 
 class MspPacket:
 
-    def __init__(self, code: int, data: bytes, checksum: int):
-        self.code = code
+    def __init__(self, message_id: MessageIDs, data: bytes, checksum: int):
+        self.message_id = message_id
         self.data = data
         self.checksum = checksum
 
     def __str__(self):
-        return f"code: {self.code}, data: {self.data}, checksum: {self.checksum}"
+        return f"code: {self.message_id}, data: {self.data}, checksum: {self.checksum}"
 
     def __eq__(self, other):
         if not isinstance(other, MspPacket):
             return False
-        return (self.code == other.code and
+        return (self.message_id == other.message_id and
                 self.data == other.data and
                 self.checksum == other.checksum)
 
@@ -77,7 +79,7 @@ class MspAsyncProtocol(Protocol):
                 break
 
     def handle_packet(self, packet: MspPacket):
-        handler = self._packet_handlers.get(packet.code, self.default_packet_handler)
+        handler = self._packet_handlers.get(packet.message_id, self.default_packet_handler)
         if handler:
             try:
                 handler(packet)
@@ -87,11 +89,11 @@ class MspAsyncProtocol(Protocol):
     def send(self, data):
         self.transport.write(data)
 
-    def set_handler(self, code: int, handler):
-        self._packet_handlers[code] = handler
+    def set_handler(self, message_id: MessageIDs, handler):
+        self._packet_handlers[message_id] = handler
 
-    def remove_handler(self, code):
-        del self._packet_handlers[code]
+    def remove_handler(self, message_id: MessageIDs):
+        del self._packet_handlers[message_id]
 
     def _handle_error(self, error_code, packet):
         if self.error_handler:
