@@ -53,7 +53,7 @@ class MspAsyncProtocol(Protocol):
     def connection_lost(self, exc):
         """Forget transport"""
         self.transport = None
-        super(Packetizer, self).connection_lost(exc)
+        super(self).connection_lost(exc)
 
     def data_received(self, data):
         self._buffer.extend(data)
