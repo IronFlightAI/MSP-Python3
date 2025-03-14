@@ -2,19 +2,19 @@
 
 """test-altitude.py: Test script to send RC commands to a MultiWii Board."""
 
-import sys
 import time
-from email._header_value_parser import MessageID
 
 from msp.message_ids import MessageIDs
 from msp.multiwii import MultiWii
 
 if __name__ == "__main__":
-    # print_debug = sys.argv[1].lower() == 'true'
-    fc = MultiWii("/dev/tty.usbmodem0x80000001", False)
+    fc = MultiWii("COM3")
     try:
         while True:
-            print(fc.get_altitude())
-            
-    except Exception as err:
-        print("Error on Main: " + str(err))
+            print(fc.get_attribute(MessageIDs.ALTITUDE))
+            time.sleep(0.5)
+    except Exception as error:
+        import traceback
+
+        print("Error on Main: " + str(error))
+        traceback.print_exc()

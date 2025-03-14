@@ -99,7 +99,7 @@ class MultiWii:
             # MessageIDs.COMP_GPS: self.__comp_gps.parse,
             MessageIDs.ATTITUDE: Attitude.parse,
             MessageIDs.ALTITUDE: Altitude.parse,
-            MessageIDs.ANALOG: Analog().parse,
+            MessageIDs.ANALOG: Analog.parse,
             # MessageIDs.RC_TUNING: Channel.parse,
             # MessageIDs.PID: None,
             # MessageIDs.BOX: None,

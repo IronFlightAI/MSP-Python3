@@ -2,21 +2,18 @@
 
 """test-attitude.py: Test script to send RC commands to a MultiWii Board."""
 import time
-import sys
 
+from msp.message_ids import MessageIDs
 from msp.multiwii import MultiWii
 
 if __name__ == "__main__":
     try:
-        print_debug = sys.argv[1].lower() == 'true'
-        fc = MultiWii("/dev/ttyS0", print_debug)
-        fc.start()
+        fc = MultiWii("COM3")
         while True:
-            print(fc.get_attitude())
+            print(fc.get_attribute(MessageIDs.ATTITUDE))
             time.sleep(.5)
-
-
     except Exception as error:
         import traceback
+
         print("Error on Main: " + str(error))
         traceback.print_exc()

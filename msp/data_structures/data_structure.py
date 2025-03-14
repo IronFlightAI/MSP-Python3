@@ -6,8 +6,8 @@ from msp.message_ids import MessageIDs
 
 
 class DataStructure(ABC):
-    def __init__(self, code: MessageIDs):
-        self.code: MessageIDs = code
+    def __init__(self, code: int):
+        self.code: int = code
 
     def __str__(self):
         return self.to_json()
@@ -17,7 +17,7 @@ class DataStructure(ABC):
 
     @staticmethod
     @abstractmethod
-    def parse(data: List[int]):
+    def parse(data: bytes):
         """
         Creates a `DataStructure <msp.data_structures.data_structure.html>`_ object from the given data
         :param data:

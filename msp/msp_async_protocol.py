@@ -37,8 +37,7 @@ class MspPacket:
 
 
 class MspAsyncProtocol(Protocol):
-    def __init__(self,
-                 default_packet_handler=lambda packet: print(packet),
+    def __init__(self, default_packet_handler=None,
                  error_handler=lambda error_code, packet: print("ERROR:", error_code, packet)):
         self.transport = None
         self._buffer = bytearray()
@@ -83,8 +82,8 @@ class MspAsyncProtocol(Protocol):
         if handler:
             try:
                 handler(packet)
-            except:
-                print("Unexpected packet handler error:", sys.exc_info()[0])
+            except Exception as e:
+                print("Unexpected packet handler error:", str(e))
 
     def send(self, data):
         self.transport.write(data)
@@ -97,4 +96,7 @@ class MspAsyncProtocol(Protocol):
 
     def _handle_error(self, error_code, packet):
         if self.error_handler:
-            self.error_handler(error_code, packet)
+            try:
+                self.error_handler(error_code, packet)
+            except Exception as e:
+                print("Unexpected error handler error:", str(e))

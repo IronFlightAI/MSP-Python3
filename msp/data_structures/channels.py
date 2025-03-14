@@ -23,7 +23,7 @@ class Channel(DataStructure):
         self.aux4 = MIN_VALUE
 
     @staticmethod
-    def parse(data):
+    def parse(data: bytes):
         channel = Channel()
         if len(data) != 0:
             channel.roll = unpack('<H', bytes(data[:2]))[0]
