@@ -88,10 +88,10 @@ class MspAsyncProtocol(Protocol):
     def send(self, data):
         self.transport.write(data)
 
-    def set_handler(self, message_id: MessageIDs, handler):
+    def set_handler(self, message_id: int, handler):
         self._packet_handlers[message_id] = handler
 
-    def remove_handler(self, message_id: MessageIDs):
+    def remove_handler(self, message_id: int):
         del self._packet_handlers[message_id]
 
     def _handle_error(self, error_code, packet):
