@@ -20,7 +20,7 @@ CODE_LEN = 1
 
 class MspPacket:
 
-    def __init__(self, message_id: MessageIDs, data: bytes, checksum: int):
+    def __init__(self, message_id: int, data: bytes, checksum: int):
         self.message_id = message_id
         self.data = data
         self.checksum = checksum
