@@ -15,7 +15,7 @@ class GPS(DataStructure):
         self.ground_course = 0  # degree*10
 
     @staticmethod
-    def parse(data) -> GPS:
+    def parse(data) -> 'GPS':
         if len(data) != 18:
             raise ValueError(f"Invalid GPS data length: {len(data)} != 18")
 

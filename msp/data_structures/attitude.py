@@ -13,7 +13,7 @@ class Attitude(DataStructure):
         self.heading = 0  # Range [-180, 180]
 
     @staticmethod
-    def parse(data: bytes) -> Attitude:
+    def parse(data: bytes) -> 'Attitude':
         if len(data) < 6:
             raise ValueError("Invalid data length for MSP_ATTITUDE packet, expected 6 bytes")
         attitude = Attitude()
