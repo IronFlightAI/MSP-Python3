@@ -15,18 +15,18 @@ class GPS(DataStructure):
         self.ground_course = 0  # degree*10
 
     @staticmethod
-    def parse(data):
+    def parse(data) -> GPS:
+        if len(data) != 18:
+            raise ValueError(f"Invalid GPS data length: {len(data)} != 18")
+
         gps = GPS()
-
-        if len(data) != 0:
-            gps.fix = data[0]
-            gps.numSat = data[1]
-            gps.lat = data[2]
-            gps.lon = data[3]
-            gps.altitude = data[4]
-            gps.speed = data[5]
-            gps.ground_course = data[6]
-
+        gps.fix = data[0]
+        gps.numSat = data[1]
+        gps.lat = unpack('<i', data[2:6])[0] / 1e7
+        gps.lon = unpack('<i', data[6:10])[0] / 1e7
+        gps.altitude = unpack('<H', data[10:12])[0]
+        gps.speed = unpack('<H', data[12:14])[0] / 100.0
+        gps.heading = unpack('<H', data[14:16])[0] / 100.0
         return gps
 
     def serialize(self, data=None) -> bytes:

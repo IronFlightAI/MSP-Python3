@@ -12,7 +12,7 @@ class Altitude(DataStructure):
         self.baro_altitude = 0  # if barometer enabled
 
     @staticmethod
-    def parse(data: bytes):
+    def parse(data: bytes) -> Altitude:
         if len(data) < 10:
             raise ValueError("Invalid data length for MSP_ANALOG packet, expected 7 bytes")
         altitude = Altitude()

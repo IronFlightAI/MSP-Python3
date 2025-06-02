@@ -20,7 +20,7 @@ class IMU(DataStructure):
         self.mz = 0
 
     @staticmethod
-    def parse(data):
+    def parse(data) -> IMU:
         imu = IMU()
 
         imu.ax = unpack('<h', bytes(data[:2]))[0]

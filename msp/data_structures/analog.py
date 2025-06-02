@@ -13,7 +13,7 @@ class Analog(DataStructure):
         self.amperage = 0  # S16 (Amperage in 0.01A steps)
 
     @staticmethod
-    def parse(data: bytes) -> DataStructure:
+    def parse(data: bytes) -> Analog:
         if len(data) < 7:
             raise ValueError("Invalid data length for MSP_ANALOG packet, expected 7 bytes")
         analog = Analog()
