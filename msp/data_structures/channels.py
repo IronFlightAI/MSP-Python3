@@ -21,6 +21,10 @@ class Channel(DataStructure):
         self.aux2 = MIN_VALUE
         self.aux3 = MIN_VALUE
         self.aux4 = MIN_VALUE
+        self.aux5 = MIN_VALUE
+        self.aux6 = MIN_VALUE
+        self.aux7 = MIN_VALUE
+        self.aux8 = MIN_VALUE
 
     @staticmethod
     def parse(data: bytes):
@@ -34,7 +38,10 @@ class Channel(DataStructure):
             channel.aux2 = unpack('<H', bytes(data[10:12]))[0]
             channel.aux3 = unpack('<H', bytes(data[12:14]))[0]
             channel.aux4 = unpack('<H', bytes(data[14:16]))[0]
-            # Channel 9 not used
+            channel.aux5 = unpack('<H', bytes(data[16:18]))[0]
+            channel.aux6 = unpack('<H', bytes(data[18:20]))[0]
+            channel.aux7 = unpack('<H', bytes(data[20:22]))[0]
+            channel.aux8 = unpack('<H', bytes(data[22:24]))[0]
 
         return channel
 
